@@ -3,8 +3,9 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Real-Time Heatmap</title>
+    <title>Real-Time Heatmap with SVG Bridge</title>
     <style>
+      /* Container for the bridge SVG, sensors, and heatmap canvas */
       #bridge-container {
         width: 800px;
         height: 400px;
@@ -18,12 +19,11 @@
     <div id="bridge-container"></div>
     <p>Check the console for incoming data.</p>
 
-    <!-- Load libraries in proper order -->
+    <!-- Load external libraries in proper order -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/4.3.2/socket.io.js"></script>
     <script src="https://d3js.org/d3.v6.min.js"></script>
-    <!-- Use version 2.0.0 instead of 2.0.5 -->
+    <!-- Using version 2.0.0 of Heatmap.js for best global support -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/heatmap.js/2.0.0/heatmap.min.js"></script>
-    <!-- Verify that h337 is defined -->
     <script>
       console.log("Type of h337:", typeof h337);
     </script>

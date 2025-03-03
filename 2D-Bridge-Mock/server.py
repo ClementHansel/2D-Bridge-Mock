@@ -15,14 +15,14 @@ def index():
 
 def generate_mock_data():
     while True:
-        with app.app_context():
-            sensor_data = [
-                {'id': 1, 'x': 200, 'y': 190, 'value': random.randint(30, 100)},
-                {'id': 2, 'x': 400, 'y': 190, 'value': random.randint(30, 100)},
-                {'id': 3, 'x': 600, 'y': 190, 'value': random.randint(30, 100)}
-            ]
-            socketio.emit("heatmap_update", sensor_data, namespace="/")
-        time.sleep(3)
+        # Generate random sensor values (range 30-100)
+        sensor_data = [
+            {'id': 1, 'x': 200, 'y': 190, 'value': random.randint(30, 100)},
+            {'id': 2, 'x': 400, 'y': 190, 'value': random.randint(30, 100)},
+            {'id': 3, 'x': 600, 'y': 190, 'value': random.randint(30, 100)}
+        ]
+        socketio.emit("heatmap_update", sensor_data, namespace="/")
+        time.sleep(3)  # Simulate updates every 3 seconds
 
 @socketio.on('connect')
 def handle_connect():

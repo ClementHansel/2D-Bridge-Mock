@@ -1,4 +1,4 @@
-// 1. Connect to WebSocket server with auto-reconnect
+// 1. Connect to the WebSocket server with auto-reconnect
 const socket = io("http://localhost:5000", {
   reconnectionAttempts: 5,
   reconnectionDelay: 2000,
@@ -12,66 +12,50 @@ socket.on("connect_error", (err) =>
   console.error("WebSocket Connection Error:", err)
 );
 
-// 2. Setup D3.js for the bridge structure
+// 2. Get the container
 const container = document.getElementById("bridge-container");
 container.style.position = "relative";
 
-const svg = d3
-  .select("#bridge-container")
-  .append("svg")
-  .attr("width", "100%")
-  .attr("height", 400)
-  .attr("viewBox", "0 0 800 400")
-  .style("position", "absolute")
-  .style("z-index", "10");
+// 3. Load the external SVG (stone-bridge.svg) and append it to the container
+d3.xml("/static/stone-bridge.svg").then(function (xml) {
+  // Append the loaded SVG to the container
+  container.appendChild(xml.documentElement);
 
-// Draw Bridge Base
-svg
-  .append("rect")
-  .attr("x", 100)
-  .attr("y", 180)
-  .attr("width", 600)
-  .attr("height", 40)
-  .attr("fill", "gray");
+  // Ensure the loaded SVG fills the container and is positioned correctly
+  const loadedSvg = container.querySelector("svg");
+  if (loadedSvg) {
+    loadedSvg.setAttribute("width", "100%");
+    loadedSvg.setAttribute("height", "100%");
+    loadedSvg.style.position = "absolute";
+    loadedSvg.style.top = "0";
+    loadedSvg.style.left = "0";
+    loadedSvg.style.zIndex = "10"; // Place it above the heatmap canvas
+  }
 
-// Draw Bridge Pillars
-const pillars = [
-  { x: 150, y: 220 },
-  { x: 630, y: 220 },
-];
+  // 4. Add sensor circles to the SVG
+  // Define sensor positions (adjust coordinates as needed based on your SVG design)
+  const sensors = [
+    { id: 1, cx: 200, cy: 190 },
+    { id: 2, cx: 400, cy: 190 },
+    { id: 3, cx: 600, cy: 190 },
+  ];
 
-svg
-  .selectAll(".pillar")
-  .data(pillars)
-  .enter()
-  .append("rect")
-  .attr("class", "pillar")
-  .attr("x", (d) => d.x)
-  .attr("y", (d) => d.y)
-  .attr("width", 20)
-  .attr("height", 80)
-  .attr("fill", "black");
+  // Append sensors to the loaded SVG using D3
+  const svg = d3.select(loadedSvg);
+  svg
+    .selectAll(".sensor")
+    .data(sensors)
+    .enter()
+    .append("circle")
+    .attr("class", "sensor")
+    .attr("id", (d) => `sensor-${d.id}`)
+    .attr("cx", (d) => d.cx)
+    .attr("cy", (d) => d.cy)
+    .attr("r", 10)
+    .attr("fill", "blue");
+});
 
-// 3. Define Sensor Positions and Render as Circles
-const sensors = [
-  { id: 1, x: 200, y: 190 },
-  { id: 2, x: 400, y: 190 },
-  { id: 3, x: 600, y: 190 },
-];
-
-svg
-  .selectAll(".sensor")
-  .data(sensors)
-  .enter()
-  .append("circle")
-  .attr("class", "sensor")
-  .attr("cx", (d) => d.x)
-  .attr("cy", (d) => d.y)
-  .attr("r", 10)
-  .attr("fill", "blue")
-  .attr("id", (d) => `sensor-${d.id}`);
-
-// 4. Initialize Heatmap.js
+// 5. Initialize Heatmap.js
 if (typeof h337 === "undefined") {
   console.error("Heatmap.js (h337) is not loaded!");
 } else {
@@ -84,16 +68,16 @@ if (typeof h337 === "undefined") {
     backgroundColor: "rgba(0, 0, 0, 0)",
   });
 
-  // Place the heatmap canvas behind the SVG
+  // Ensure the heatmap canvas is positioned correctly (behind the SVG sensors)
   const heatmapCanvas = container.querySelector("canvas");
   if (heatmapCanvas) {
     heatmapCanvas.style.position = "absolute";
     heatmapCanvas.style.top = "0";
     heatmapCanvas.style.left = "0";
-    heatmapCanvas.style.zIndex = "5";
+    heatmapCanvas.style.zIndex = "5"; // Lower than the SVG (which is 10)
   }
 
-  // 5. Handle WebSocket Updates & Update Heatmap Data
+  // 6. Handle WebSocket updates and update heatmap data
   socket.on("heatmap_update", (data) => {
     console.log("Received heatmap data:", data);
 
