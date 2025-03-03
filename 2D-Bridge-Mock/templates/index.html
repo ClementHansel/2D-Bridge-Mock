@@ -5,12 +5,13 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Real-Time Heatmap with SVG Bridge</title>
     <style>
-      /* Container for the bridge SVG, sensors, and heatmap canvas */
+      /* Container for the bridge, heatmap, and sensor overlay */
       #bridge-container {
         width: 800px;
         height: 400px;
         border: 1px solid #ccc;
         position: relative;
+        overflow: hidden; /* Hide any parts of the SVG that exceed the container */
       }
     </style>
   </head>
@@ -22,7 +23,7 @@
     <!-- Load external libraries in proper order -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/4.3.2/socket.io.js"></script>
     <script src="https://d3js.org/d3.v6.min.js"></script>
-    <!-- Using version 2.0.0 of Heatmap.js for best global support -->
+    <!-- Use a reliable version of Heatmap.js -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/heatmap.js/2.0.0/heatmap.min.js"></script>
     <script>
       console.log("Type of h337:", typeof h337);
